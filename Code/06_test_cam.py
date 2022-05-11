@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import keras
 
-model = keras.models.load_model(r"C:\Users\sande\Desktop\BEProject\Code\model\trained_cnn_model.h5")
+model = keras.models.load_model(r"C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\model\trained_cnn_model.h5")
 
 background = None
 accumulated_weight = 0.5
@@ -12,9 +12,7 @@ ROI_bottom = 300
 ROI_right = 150
 ROI_left = 350
 
-word_dict = {0:'One',1:'Ten',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine', 10:'Ten'}
-
-
+word_dict = {0:'Zero',1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten',11:'Nice',12:'Call',13:'Rock',14:'Nope',15:'Namaste'}
 
 
 def cal_accum_avg(frame, accumulated_weight):

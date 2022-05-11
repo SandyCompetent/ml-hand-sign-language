@@ -15,14 +15,19 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 warnings.simplefilter(action='ignore', category=FutureWarning)
 import matplotlib.pyplot as plt
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-train_path = r'C:\Users\sande\Desktop\BEProject\Code\gestures\train'
-test_path = r'C:\Users\sande\Desktop\BEProject\Code\gestures\test'
+
+train_path = r'C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\gestures\train'
+test_path = r'C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\gestures\test'
 
 train_batches = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input).flow_from_directory(directory=train_path, target_size=(64,64), class_mode='categorical', batch_size=10,shuffle=True)
 test_batches = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input).flow_from_directory(directory=test_path, target_size=(64,64), class_mode='categorical', batch_size=10, shuffle=True)
 
 imgs, labels = next(train_batches)
+
+print(imgs.size);
 
 
 #Plotting the images...
@@ -56,10 +61,8 @@ model.add(Flatten())
 
 model.add(Dense(64,activation ="relu"))
 model.add(Dense(128,activation ="relu"))
-#model.add(Dropout(0.2))
 model.add(Dense(128,activation ="relu"))
-#model.add(Dropout(0.3))
-model.add(Dense(10,activation ="softmax"))
+model.add(Dense(16,activation ="softmax"))
 
 
 # In[23]:
@@ -68,7 +71,6 @@ model.add(Dense(10,activation ="softmax"))
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=1, min_lr=0.0001)
 early_stop = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=0, mode='auto')
-
 
 
 model.compile(optimizer=SGD(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
@@ -101,7 +103,7 @@ scores #[loss, accuracy] on test data...
 model.metrics_names
 
 
-word_dict = {0:'One',1:'Ten',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine'}
+word_dict = {0:'Zero',1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten',11:'Nice',12:'Call',13:'Rock',14:'Nope',15:'Namaste'}
 
 predictions = model.predict(imgs, verbose=0)
 print("predictions on a small set of test data--")
