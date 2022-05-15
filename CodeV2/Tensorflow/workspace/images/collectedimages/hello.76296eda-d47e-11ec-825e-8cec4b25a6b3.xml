@@ -1,0 +1,26 @@
+<annotation>
+	<folder>collectedimages</folder>
+	<filename>hello.76296eda-d47e-11ec-825e-8cec4b25a6b3.jpg</filename>
+	<path>C:\Users\sande\Documents\GitHub\ml_sign_be_project\CodeV2\Tensorflow\workspace\images\collectedimages\hello.76296eda-d47e-11ec-825e-8cec4b25a6b3.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>480</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Hello</name>
+		<pose>Unspecified</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>522</xmin>
+			<ymin>90</ymin>
+			<xmax>640</xmax>
+			<ymax>379</ymax>
+		</bndbox>
+	</object>
+</annotation>

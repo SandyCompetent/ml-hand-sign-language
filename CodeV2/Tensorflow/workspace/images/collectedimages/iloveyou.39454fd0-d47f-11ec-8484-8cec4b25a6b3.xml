@@ -1,0 +1,26 @@
+<annotation>
+	<folder>collectedimages</folder>
+	<filename>iloveyou.39454fd0-d47f-11ec-8484-8cec4b25a6b3.jpg</filename>
+	<path>C:\Users\sande\Documents\GitHub\ml_sign_be_project\CodeV2\Tensorflow\workspace\images\collectedimages\iloveyou.39454fd0-d47f-11ec-8484-8cec4b25a6b3.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>640</width>
+		<height>480</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>I Love You</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>220</xmin>
+			<ymin>93</ymin>
+			<xmax>497</xmax>
+			<ymax>441</ymax>
+		</bndbox>
+	</object>
+</annotation>
