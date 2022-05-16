@@ -12,7 +12,8 @@ ROI_bottom = 300
 ROI_right = 150
 ROI_left = 350
 
-word_dict = {0:'Zero',1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten',11:'Nice',12:'Call',13:'Rock',14:'Nope',15:'Namaste'}
+# word_dict = {0:'Zero',1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten',11:'Nice',12:'Call',13:'Rock',14:'Nope',15:'Namaste'}
+word_dict = {0:'Hello! How are you?',1:'I am good, how you?',2:'I am fine, all okay',3:'Good! See you later.'}
 
 
 def cal_accum_avg(frame, accumulated_weight):

@@ -42,7 +42,7 @@ def plotImages(images_arr):
     plt.show()
 
 
-plotImages(imgs)
+# plotImages(imgs)
 print(imgs.shape)
 print(labels)
 
@@ -62,7 +62,7 @@ model.add(Flatten())
 model.add(Dense(64,activation ="relu"))
 model.add(Dense(128,activation ="relu"))
 model.add(Dense(128,activation ="relu"))
-model.add(Dense(16,activation ="softmax"))
+model.add(Dense(4,activation ="softmax"))
 
 
 # In[23]:
@@ -103,7 +103,8 @@ scores #[loss, accuracy] on test data...
 model.metrics_names
 
 
-word_dict = {0:'Zero',1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten',11:'Nice',12:'Call',13:'Rock',14:'Nope',15:'Namaste'}
+# word_dict = {0:'Zero',1:'One',2:'Two',3:'Three',4:'Four',5:'Five',6:'Six',7:'Seven',8:'Eight',9:'Nine',10:'Ten',11:'Nice',12:'Call',13:'Rock',14:'Nope',15:'Namaste'}
+word_dict = {0:'Hello! How are you?',1:'I am good, how you?',2:'I am fine, all okay',3:'Good! See you later.'}
 
 predictions = model.predict(imgs, verbose=0)
 print("predictions on a small set of test data--")
