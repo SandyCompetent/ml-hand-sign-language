@@ -1,6 +1,11 @@
 import numpy as np
 import cv2
 import keras
+import os
+import time
+
+from gtts import gTTS
+from playsound import playsound
 
 model = keras.models.load_model(r"C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\model\trained_cnn_model.h5")
 
@@ -93,6 +98,11 @@ while True:
             
             pred = model.predict(thresholded)
             cv2.putText(frame_copy, word_dict[np.argmax(pred)], (170, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255), 2)
+            # language = 'en'
+            # myobj = gTTS(text=word_dict[np.argmax(pred)], lang=language, slow=False)
+            # myobj.save("welcome.mp3")
+            # playsound("welcome.mp3")
+            # time.sleep(5)
             
     # Draw ROI on frame_copy
     cv2.rectangle(frame_copy, (ROI_left, ROI_top), (ROI_right, ROI_bottom), (255,128,0), 3)
