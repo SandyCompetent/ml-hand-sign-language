@@ -44,7 +44,7 @@ def segment_hand(frame, threshold=25):
 cam = cv2.VideoCapture(0)
 
 num_frames = 0
-element = 3
+element = 11
 num_imgs_taken = 0
 
 while True:
