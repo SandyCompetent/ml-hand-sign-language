@@ -44,7 +44,7 @@ def segment_hand(frame, threshold=25):
 cam = cv2.VideoCapture(0)
 
 num_frames = 0
-element = 11
+element = 4
 num_imgs_taken = 0
 
 while True:
@@ -106,7 +106,7 @@ while True:
             # Displaying the thresholded image
             cv2.imshow("Thresholded Hand Image", thresholded)
             if num_imgs_taken <= 500:
-                path = r'C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\gestures\train'+ "\\"+str(element)+ "\\"
+                path = r'C:\Users\sande\Desktop\ml_sign_be_project\Code\gestures\train'+ "\\"+str(element)+ "\\"
                 print(path + str(num_imgs_taken) +'.jpg')
                 cv2.imwrite(os.path.join(path, str(num_imgs_taken)+'.jpg'), thresholded)
             else:

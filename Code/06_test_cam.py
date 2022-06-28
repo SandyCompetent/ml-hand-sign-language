@@ -7,7 +7,7 @@ import time
 from gtts import gTTS
 from playsound import playsound
 
-model = keras.models.load_model(r"C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\model\trained_cnn_model.h5")
+model = keras.models.load_model(r"C:\Users\sande\Desktop\ml_sign_be_project\Code\model\trained_cnn_model.h5")
 
 background = None
 accumulated_weight = 0.5

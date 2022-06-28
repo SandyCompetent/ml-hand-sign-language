@@ -19,8 +19,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
-train_path = r'C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\gestures\train'
-test_path = r'C:\Users\sande\Documents\GitHub\ml_sign_be_project\Code\gestures\test'
+train_path = r'C:\Users\sande\Desktop\\ml_sign_be_project\Code\gestures\train'
+test_path = r'C:\Users\sande\Desktop\\ml_sign_be_project\Code\gestures\test'
 
 train_batches = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input).flow_from_directory(directory=train_path, target_size=(64,64), class_mode='categorical', batch_size=10,shuffle=True)
 test_batches = ImageDataGenerator(preprocessing_function=tf.keras.applications.vgg16.preprocess_input).flow_from_directory(directory=test_path, target_size=(64,64), class_mode='categorical', batch_size=10, shuffle=True)
