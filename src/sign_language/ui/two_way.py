@@ -22,6 +22,7 @@ class TwoWayDictionaryWindow:
         curr_dir = os.path.dirname(os.path.abspath(__file__))
         repo_root = os.path.dirname(os.path.dirname(os.path.dirname(curr_dir)))
         self.assets_dir = os.path.join(repo_root, "Asset")
+        self.legacy_v3_dir = os.path.join(repo_root, "legacy", "phase3_asl_threshold")
         self.codev3_dir = os.path.join(repo_root, "CodeV3")
 
         self._setup_ui()
@@ -136,10 +137,13 @@ class TwoWayDictionaryWindow:
         target_img = None
         asset_signs = os.path.join(self.assets_dir, "signs.png")
         sign1_img = os.path.join(self.assets_dir, "sign1.png")
+        legacy_v3_signs = os.path.join(self.legacy_v3_dir, "signs.png")
         legacy_signs = os.path.join(self.codev3_dir, "signs.png")
 
         if os.path.exists(asset_signs):
             target_img = asset_signs
+        elif os.path.exists(legacy_v3_signs):
+            target_img = legacy_v3_signs
         elif os.path.exists(legacy_signs):
             target_img = legacy_signs
         elif os.path.exists(sign1_img):

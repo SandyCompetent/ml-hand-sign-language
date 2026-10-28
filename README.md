@@ -304,9 +304,10 @@ ml-hand-sign-language/
 │   ├── test_spell_corrector.py  # Prefix autocomplete tests
 │   └── test_tts.py              # Audio synthesis lifecycle tests
 │
-├── Code/                        # Phase-1 Tkinter + SQLite + CNN scripts (fixed & preserved)
-├── CodeV2/                      # Exploratory notebooks & models
-├── CodeV3/                      # Phase-3 ASL thresholding application (fixed & preserved)
+├── legacy/                      # Archived Legacy Implementations (Preserved & Fixed)
+│   ├── phase1_basic_gestures/   # Phase 1 SQLite + Tkinter + CNN scripts (former Code/)
+│   ├── phase2_experiments/      # Exploratory notebooks & models (former CodeV2/)
+│   └── phase3_asl_threshold/    # Phase 3 ASL thresholding application (former CodeV3/)
 ├── Asset/                       # Sign reference charts and demonstration media
 ├── Reference Paper/             # 10 IEEE/Conference literature survey papers
 ├── Code Images/                 # Application & dataset screenshots
