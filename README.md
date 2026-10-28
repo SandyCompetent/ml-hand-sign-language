@@ -2,7 +2,7 @@
 
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Tasks%201.2-orange.svg)](https://developers.google.com/mediapipe)
-[![Tests](https://img.shields.io/badge/Tests-Passing%20(12%2F12)-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-Passing%20(15%2F15)-brightgreen.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An advanced Computer Vision and Machine Learning system that translates American Sign Language (ASL) fingerspelling and conversational gestures into text and audible English speech in real-time. Includes a two-way (Hearing-to-Deaf) visual communicator for full-duplex accessibility.
@@ -329,19 +329,22 @@ Automated tests verify tracking, geometry, classification, autocomplete, and aud
 Expected output:
 ```text
 ============================= test session starts ==============================
-tests/test_classifier.py::test_gesture_analyzer_hello PASSED             [  8%]
-tests/test_classifier.py::test_gesture_analyzer_l PASSED                 [ 16%]
-tests/test_classifier.py::test_gesture_analyzer_ily PASSED               [ 25%]
-tests/test_classifier.py::test_gesture_analyzer_y PASSED                 [ 33%]
-tests/test_classifier.py::test_classifier_temporal_smoothing PASSED      [ 41%]
-tests/test_spell_corrector.py::test_spell_corrector_prefixes PASSED      [ 50%]
-tests/test_spell_corrector.py::test_spell_corrector_misspelling PASSED   [ 58%]
-tests/test_spell_corrector.py::test_spell_corrector_empty PASSED         [ 66%]
-tests/test_spell_corrector.py::test_spell_corrector_is_correct PASSED    [ 75%]
-tests/test_tracker.py::test_tracker_blank_image PASSED                   [ 83%]
-tests/test_tracker.py::test_tracker_real_image PASSED                    [ 91%]
-tests/test_tts.py::test_tts_engine_lifecycle PASSED                      [100%]
-============================== 12 passed in 1.83s ==============================
+tests/test_classifier.py::test_gesture_analyzer_hello PASSED             [  6%]
+tests/test_classifier.py::test_gesture_analyzer_l PASSED                 [ 13%]
+tests/test_classifier.py::test_gesture_analyzer_ily PASSED               [ 20%]
+tests/test_classifier.py::test_gesture_analyzer_y PASSED                 [ 26%]
+tests/test_classifier.py::test_classifier_temporal_smoothing PASSED      [ 33%]
+tests/test_spell_corrector.py::test_spell_corrector_prefixes PASSED      [ 40%]
+tests/test_spell_corrector.py::test_spell_corrector_misspelling PASSED   [ 46%]
+tests/test_spell_corrector.py::test_spell_corrector_empty PASSED         [ 53%]
+tests/test_spell_corrector.py::test_spell_corrector_is_correct PASSED    [ 60%]
+tests/test_tracker.py::test_tracker_blank_image PASSED                   [ 66%]
+tests/test_tracker.py::test_tracker_real_image PASSED                    [ 73%]
+tests/test_tts.py::test_tts_engine_lifecycle PASSED                      [ 80%]
+tests/test_two_way.py::test_conversational_signs_catalog PASSED          [ 86%]
+tests/test_two_way.py::test_alphabet_crops_exist PASSED                  [ 93%]
+tests/test_two_way.py::test_two_way_window_headless PASSED               [100%]
+============================== 15 passed in 2.25s ==============================
 ```
 
 ---
