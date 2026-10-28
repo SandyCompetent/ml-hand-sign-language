@@ -66,8 +66,11 @@ class HandTracker:
         if vision is None or BaseOptions is None:
             raise RuntimeError("MediaPipe is not installed or failed to import.")
 
+        with open(self.model_path, "rb") as f:
+            model_bytes = f.read()
+
         options = vision.HandLandmarkerOptions(
-            base_options=BaseOptions(model_asset_path=self.model_path),
+            base_options=BaseOptions(model_asset_buffer=model_bytes),
             num_hands=self.max_num_hands,
             min_hand_detection_confidence=self.min_detection_conf,
             min_hand_presence_confidence=self.min_presence_conf,
@@ -109,9 +112,12 @@ class HandTracker:
             pixel_pts = []
 
             for lm in landmarks:
-                raw_pts.append((lm.x, lm.y, lm.z))
-                px = int(np.clip(lm.x * w, 0, w - 1))
-                py = int(np.clip(lm.y * h, 0, h - 1))
+                lx = float(lm.x) if not (math.isnan(lm.x) or math.isinf(lm.x)) else 0.0
+                ly = float(lm.y) if not (math.isnan(lm.y) or math.isinf(lm.y)) else 0.0
+                lz = float(lm.z) if not (math.isnan(lm.z) or math.isinf(lm.z)) else 0.0
+                raw_pts.append((lx, ly, lz))
+                px = int(np.clip(lx * w, 0, w - 1))
+                py = int(np.clip(ly * h, 0, h - 1))
                 pixel_pts.append((px, py))
 
             # Compute bounding box

@@ -20,124 +20,85 @@ from sign_language.audio import TTSEngine
 from sign_language.ui.two_way import TwoWayDictionaryWindow
 
 
-class VideoCaptureThread:
-    """Dedicated background thread for webcam video frame capture with auto-retry and multi-index scanning."""
+class CameraCapture:
+    """Robust OpenCV camera capture manager operating synchronously on the main thread.
+    
+    Avoids AVFoundation multithreaded deallocation race conditions on macOS
+    (e.g., EXC_BAD_ACCESS during AVCaptureInputPort dealloc in CoreMedia dispatch queues).
+    """
 
     def __init__(self, src: int = 0):
         self.src = src
         self.cap: Optional[cv2.VideoCapture] = None
-        self.ret = False
-        self.frame: Optional[np.ndarray] = None
-        self.running = True
         self.is_connected = False
         self.status_message = "Initializing camera..."
-        self.lock = threading.Lock()
-        self._init_camera()
-        self.thread = threading.Thread(target=self._capture_loop, daemon=True)
-        self.thread.start()
+        self.open_camera(src)
 
-    def _init_camera(self) -> bool:
-        """Attempt to open camera, trying candidate device indices."""
-        candidates = [self.src]
-        for alt in [0, 1, 2]:
-            if alt not in candidates:
-                candidates.append(alt)
+    def open_camera(self, src: int) -> bool:
+        """Open camera device index cleanly without candidate churning."""
+        self.release()
+        self.src = src
+        try:
+            cap = cv2.VideoCapture(src)
+            if cap.isOpened():
+                # Set target resolution and frame rate
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+                cap.set(cv2.CAP_PROP_FPS, 30)
 
-        for candidate_idx in candidates:
-            try:
-                cap = cv2.VideoCapture(candidate_idx)
-                if cap.isOpened():
-                    # Probe a test read
-                    ret, test_frame = cap.read()
-                    if ret and test_frame is not None:
-                        self.src = candidate_idx
-                        self.cap = cap
-                        self.ret = True
-                        self.frame = test_frame
-                        self.is_connected = True
-                        self.status_message = f"Camera #{candidate_idx} Active"
-                        return True
-                    cap.release()
-            except Exception as e:
-                pass
-
-        # If all candidates fail, initialize fallback
-        self.cap = cv2.VideoCapture(self.src)
-        self.is_connected = False
-        self.status_message = "Camera access denied or device busy (Check macOS Privacy & Security > Camera)"
-        return False
-
-    def reconnect(self) -> bool:
-        """Re-scan and reconnect to camera."""
-        with self.lock:
-            if self.cap is not None:
-                try:
-                    self.cap.release()
-                except Exception:
-                    pass
-            success = self._init_camera()
-            return success
-
-    def set_source(self, new_src: int) -> bool:
-        """Switch to a specific camera device index."""
-        with self.lock:
-            if self.cap is not None:
-                try:
-                    self.cap.release()
-                except Exception:
-                    pass
-            self.src = new_src
-            self.ret = False
-            self.frame = None
-            try:
-                cap = cv2.VideoCapture(new_src)
-                if cap.isOpened():
+                # Test grab
+                ret, test_frame = cap.read()
+                if ret and test_frame is not None:
                     self.cap = cap
                     self.is_connected = True
-                    self.status_message = f"Camera #{new_src} Active"
+                    self.status_message = f"Camera #{src} Active ({test_frame.shape[1]}x{test_frame.shape[0]})"
                     return True
-                else:
-                    self.cap = cap
-                    self.is_connected = False
-                    self.status_message = f"Camera #{new_src} unavailable"
-                    return False
-            except Exception as e:
-                self.is_connected = False
-                self.status_message = f"Error opening Camera #{new_src}: {e}"
-                return False
-
-    def _capture_loop(self) -> None:
-        while self.running:
-            if self.cap is not None and self.cap.isOpened():
-                ret, frame = self.cap.read()
-                if ret and frame is not None:
-                    with self.lock:
-                        self.ret = ret
-                        self.frame = frame
-                        self.is_connected = True
-                else:
-                    with self.lock:
-                        self.ret = False
-                    time.sleep(0.05)
-            else:
-                time.sleep(0.1)
+                cap.release()
+            self.cap = None
+            self.is_connected = False
+            self.status_message = f"Camera #{src} unavailable (Check macOS System Settings > Privacy & Security > Camera)"
+            return False
+        except Exception as e:
+            self.cap = None
+            self.is_connected = False
+            self.status_message = f"Error opening camera #{src}: {e}"
+            return False
 
     def read(self) -> Tuple[bool, Optional[np.ndarray]]:
-        with self.lock:
-            if not self.ret or self.frame is None:
-                return False, None
-            return True, self.frame.copy()
+        """Grab and decode next video frame."""
+        if self.cap is None or not self.is_connected:
+            return False, None
+        try:
+            ret, frame = self.cap.read()
+            if ret and frame is not None:
+                return True, frame
+            return False, None
+        except Exception:
+            return False, None
+
+    def reconnect(self) -> bool:
+        """Reconnect to current device."""
+        return self.open_camera(self.src)
+
+    def set_source(self, new_src: int) -> bool:
+        """Switch to a different camera device index."""
+        return self.open_camera(new_src)
+
+    def release(self) -> None:
+        """Safely release camera session on main thread."""
+        if self.cap is not None:
+            try:
+                self.cap.release()
+            except Exception:
+                pass
+            self.cap = None
+        self.is_connected = False
 
     def stop(self) -> None:
-        self.running = False
-        if hasattr(self, "thread") and self.thread.is_alive():
-            self.thread.join(timeout=1.0)
-        with self.lock:
-            if hasattr(self, "cap") and self.cap is not None:
-                try:
-                    self.cap.release()
-                except Exception:
-                    pass
+        self.release()
+
+
+VideoCaptureThread = CameraCapture
 
 
 class SignLanguageApp:
@@ -421,7 +382,10 @@ class SignLanguageApp:
             frame = cv2.flip(frame, 1)
 
             # Detect hand & 3D landmarks
-            annotated_frame, hands = self.tracker.find_hands(frame, draw=True)
+            try:
+                annotated_frame, hands = self.tracker.find_hands(frame, draw=True)
+            except Exception as e:
+                annotated_frame, hands = frame, []
 
             detected_label = "blank"
             confidence = 0.0
