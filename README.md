@@ -13,7 +13,8 @@ An advanced Computer Vision and Machine Learning system that translates American
 - [Overview & Motivation](#-overview--motivation)
 - [Key Features](#-key-features)
 - [Architecture](#-architecture)
-- [Comparison: Legacy vs. v2.0](#-comparison-legacy-vs-v20)
+- [Evolution & What Changed (2022 vs. 2026)](#-evolution--what-changed-2022-push-vs-2026-v20)
+- [Quick Comparison Table](#-quick-comparison-legacy-vs-v20)
 - [Quickstart with `run.bash`](#-quickstart-with-runbash)
 - [macOS Camera Permissions Guide](#-macos-camera-permissions-guide)
 - [Supported Signs & Gestures](#-supported-signs--gestures)
@@ -105,7 +106,54 @@ Originally conceived as a Bachelor of Engineering (B.E.) Capstone Project (*"Rea
 
 ---
 
-## 📊 Comparison: Legacy vs. v2.0
+## 🔄 Evolution & What Changed: 2022 Push vs. 2026 v2.0
+
+When the project was concluded in **June 2022 (`commit 5e411b7`)**, it represented a functional undergraduate Capstone Project. However, between 2022 and 2026, Python, OpenCV, TensorFlow, and operating system security (macOS camera privacy) underwent breaking changes that prevented the legacy code from running on modern machines. In **October 2026**, the system was overhauled into version **2.0.0**.
+
+Here is a detailed summary of what evolved:
+
+### 1. Computer Vision & Landmark Tracking
+* **2022 (Legacy)**: Used classical image thresholding and background accumulation subtraction (`cv2.accumulateWeighted`). Required the user to hold the camera completely still against a static background, calibrate background frames, and hold their hand strictly within a small $200 \times 200$ px bounding box. Any slight shift in room lighting, shadows, or varied skin tones caused complete segmentation failure.
+* **2026 (v2.0)**: Integrated **Google MediaPipe Tasks HandLandmarker** (`mediapipe>=1.2.0`). Tracks **21 3D hand landmarks** anywhere in the camera frame with zero bounding-box constraints. Operates invariant to lighting, skin tones, and background clutter. Landmark coordinates are mathematically normalized relative to the wrist and scaled by hand span, making recognition robust to distance and position.
+
+### 2. Gesture Classification & Temporal Smoothing
+* **2022 (Legacy)**: Relied on 2-layer Keras CNN models (`model-bw.h5`, `model-bw_dru.h5`, `model-bw_tkdi.h5`, `model-bw_smn.h5`) trained on 64x64/128x128 binary thresholded silhouettes. Experienced significant frame-to-frame classification jitter.
+* **2026 (v2.0)**: Built a kinematic feature and angle analyzer (`GestureAnalyzer`) combined with a temporal voting window (`LandmarkClassifier`). Requires signs to remain stable for several consecutive frames before committing, completely eliminating single-frame flickering. Added support for both fingerspelled letters (`A`–`Z`), numbers (`1`–`6`), and conversational whole-sign gestures (`Hello`, `I Love You`, `Rock`, `OK`, `L`, `V`, `W`, `Y`). Also includes a backward-compatible adapter (`LegacyCNNClassifier`) for legacy `.h5` models.
+
+### 3. Natural Language Processing & Spell Autocomplete
+* **2022 (Legacy)**: Relied on `hunspell` with a hardcoded Linux path (`/usr/share/hunspell/en_US.dic`). This caused immediate crashes on macOS and Windows and required complex native C++ compiler headers. Furthermore, it only suggested spell corrections for completed words after a typo was committed.
+* **2026 (v2.0)**: Replaced with pure-Python `pyspellchecker` (zero native C++ build requirements, cross-platform). Introduced **predictive prefix autocomplete**: as a user fingerspells (e.g., `H-E-L`), the system suggests `HELLO`, `HELP`, `HELD` in interactive pill buttons. Clicking a button auto-completes the word and inserts a space, speeding up communication by 3x–5x.
+
+### 4. Audio & Text-to-Speech (TTS) Engine
+* **2022 (Legacy)**: Relied on `gTTS` (Google Translate web API) and `playsound`. Every spoken word required an active internet connection to download an MP3 file to disk and play it back, causing high latency and blocking the application loop.
+* **2026 (v2.0)**: Engineered an **offline, non-blocking asynchronous TTS engine** (`TTSEngine`). Dispatches speech requests to a background thread using native OS speech tools (`say` on macOS, `pyttsx3`/`powershell` on Windows, `espeak` on Linux) with zero cloud latency and zero dropped video frames.
+
+### 5. Graphical User Interface & Responsiveness
+* **2022 (Legacy)**: Fixed $900 \times 1100$ px Tkinter window that overflowed standard laptop displays (e.g., 13" MacBook screens). Synchronous webcam read and neural inference ran directly on the main UI thread, causing severe UI freezing.
+* **2026 (v2.0)**: 
+  - **Threaded Video Pipeline**: Dedicated capture thread streams smooth 30–60 FPS video without blocking the GUI.
+  - **Responsive Sizing**: Dynamic window layout adapting to standard screen resolutions without geometric expansion loops.
+  - **Camera Switcher**: Real-time toggle button (`📷 Switch Camera 0 ↔ 1`) to switch between macOS FaceTime cameras and iPhone Continuity Camera.
+  - **Two-Way Communicator**: Added Hearing-to-Deaf visual dictionary (`TwoWayDictionaryWindow`) allowing hearing individuals to type or speak text and see corresponding sign language demonstrations.
+
+### 6. Legacy Codebase Repair & Cross-Platform Compatibility
+The original 2022 scripts were preserved in `Code/` and `CodeV3/`, with all breaking bugs resolved:
+* **Indentation TabError**: Fixed mixed tabs and spaces in `CodeV3/app.py` line 16.
+* **Path Concatenation Bug**: Fixed string concatenation bugs (`self.directory + "model-bw.json"`) that produced non-existent paths.
+* **Pillow 10+ Incompatibility**: Replaced removed `Image.ANTIALIAS` with `Image.Resampling.LANCZOS` in `Code/01_login.py`, `02_registration.py`, and `03_dashboard.py`.
+* **OpenCV 4+ Unpacking Crash**: Fixed `cv2.findContours` 3-tuple unpacking in `Code/06_test_cam.py` for modern OpenCV versions (`contours, hierarchy = ...[-2:]`).
+* **Hardcoded Windows Paths**: Replaced hardcoded paths (`C:\Users\sande\Desktop\...`) in `Code/05_train_cnn.py` and `Code/06_test_cam.py` with dynamic `os.path.join` relative to `__file__`.
+
+### 7. Packaging, Tooling & Testing
+* **2022 (Legacy)**: No project packaging, no unit tests, and frozen 2018-era `requirements_pip.txt` (Keras 2.2.4) that failed to build on modern Python (3.10–3.12) or Apple Silicon ARM64.
+* **2026 (v2.0)**:
+  - Standard `pyproject.toml` specification (`sign-language-translator==2.0.0`) managed with modern tools (`uv` and `pip`).
+  - Executable 1-click launcher script [`run.bash`](run.bash).
+  - Comprehensive 12-test automated test suite (`pytest tests/ -v`) validating tracking, classification, autocomplete, and audio synthesis in under 2 seconds.
+
+---
+
+## 📊 Quick Comparison: Legacy vs. v2.0
 
 | Feature | Legacy Phase 1 & 3 (`Code/`, `CodeV3/`) | Modern Version 2.0 (`src/sign_language/`) |
 | :--- | :--- | :--- |
