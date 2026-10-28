@@ -3,7 +3,7 @@
 [![Python 3.9+](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-Tasks%201.2-orange.svg)](https://developers.google.com/mediapipe)
 [![Tests](https://img.shields.io/badge/Tests-Passing%20(12%2F12)-brightgreen.svg)]()
-[![License](https://img.shields.io/badge/License-Academic-lightgrey.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An advanced Computer Vision and Machine Learning system that translates American Sign Language (ASL) fingerspelling and conversational gestures into text and audible English speech in real-time. Includes a two-way (Hearing-to-Deaf) visual communicator for full-duplex accessibility.
 
@@ -22,6 +22,7 @@ An advanced Computer Vision and Machine Learning system that translates American
 - [Project Structure](#-project-structure)
 - [Automated Testing](#-automated-testing)
 - [Authors & Academic Background](#-authors--academic-background)
+- [License](#-license)
 
 ---
 
@@ -356,3 +357,9 @@ Original Bachelor of Engineering Project (2021–2022):
   - Harshda Patil
   - Sanghavi Appam
 - **Project Guide**: Prof. Disha Deotale
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
