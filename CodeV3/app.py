@@ -3,45 +3,83 @@ import tkinter as tk
 import cv2
 import os
 import numpy as np
-from keras.models import model_from_json
+try:
+    from tensorflow.keras.models import model_from_json
+except ImportError:
+    try:
+        from keras.models import model_from_json
+    except ImportError:
+        model_from_json = None
 import operator
 import time
 import sys, os
 import matplotlib.pyplot as plt
-import hunspell
+
+class _SpellSuggester:
+    def __init__(self):
+        self._hs = None
+        try:
+            import hunspell
+            for dic, aff in [
+                ('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff'),
+                ('/Library/Spelling/en_US.dic', '/Library/Spelling/en_US.aff'),
+            ]:
+                if os.path.exists(dic) and os.path.exists(aff):
+                    self._hs = hunspell.HunSpell(dic, aff)
+                    break
+        except Exception:
+            self._hs = None
+        if self._hs is None:
+            try:
+                from spellchecker import SpellChecker
+                self._sc = SpellChecker()
+            except Exception:
+                self._sc = None
+
+    def suggest(self, word):
+        if not word:
+            return []
+        if self._hs is not None:
+            return self._hs.suggest(word)
+        if hasattr(self, '_sc') and self._sc is not None:
+            cands = list(self._sc.candidates(word) or [])
+            return cands[:5]
+        return []
+
 from string import ascii_uppercase
 
 class Application:
     def __init__(self):
-	self.directory = 'model'
-        self.hs = hunspell.HunSpell('/usr/share/hunspell/en_US.dic', '/usr/share/hunspell/en_US.aff')
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        self.directory = os.path.join(base_dir, 'model')
+        self.hs = _SpellSuggester()
         self.vs = cv2.VideoCapture(0)
         self.current_image = None
         self.current_image2 = None
         
-        self.json_file = open(self.directory+"model-bw.json", "r")
-        self.model_json = self.json_file.read()
-        self.json_file.close()
-        self.loaded_model = model_from_json(self.model_json)
-        self.loaded_model.load_weights(self.directory+"model-bw.h5")
+        with open(os.path.join(self.directory, "model-bw.json"), "r") as json_file:
+            self.model_json = json_file.read()
+        self.loaded_model = model_from_json(self.model_json) if model_from_json else None
+        if self.loaded_model:
+            self.loaded_model.load_weights(os.path.join(self.directory, "model-bw.h5"))
 
-        self.json_file_dru = open(self.directory+"model-bw_dru.json" , "r")
-        self.model_json_dru = self.json_file_dru.read()
-        self.json_file_dru.close()
-        self.loaded_model_dru = model_from_json(self.model_json_dru)
-        self.loaded_model_dru.load_weights("model-bw_dru.h5")
+        with open(os.path.join(self.directory, "model-bw_dru.json"), "r") as json_file_dru:
+            self.model_json_dru = json_file_dru.read()
+        self.loaded_model_dru = model_from_json(self.model_json_dru) if model_from_json else None
+        if self.loaded_model_dru:
+            self.loaded_model_dru.load_weights(os.path.join(self.directory, "model-bw_dru.h5"))
 
-        self.json_file_tkdi = open(self.directory+"model-bw_tkdi.json" , "r")
-        self.model_json_tkdi = self.json_file_tkdi.read()
-        self.json_file_tkdi.close()
-        self.loaded_model_tkdi = model_from_json(self.model_json_tkdi)
-        self.loaded_model_tkdi.load_weights(self.directory+"model-bw_tkdi.h5")
+        with open(os.path.join(self.directory, "model-bw_tkdi.json"), "r") as json_file_tkdi:
+            self.model_json_tkdi = json_file_tkdi.read()
+        self.loaded_model_tkdi = model_from_json(self.model_json_tkdi) if model_from_json else None
+        if self.loaded_model_tkdi:
+            self.loaded_model_tkdi.load_weights(os.path.join(self.directory, "model-bw_tkdi.h5"))
 
-        self.json_file_smn = open(self.directory+"model-bw_smn.json" , "r")
-        self.model_json_smn = self.json_file_smn.read()
-        self.json_file_smn.close()
-        self.loaded_model_smn = model_from_json(self.model_json_smn)
-        self.loaded_model_smn.load_weights(self.directory+"model-bw_smn.h5")
+        with open(os.path.join(self.directory, "model-bw_smn.json"), "r") as json_file_smn:
+            self.model_json_smn = json_file_smn.read()
+        self.loaded_model_smn = model_from_json(self.model_json_smn) if model_from_json else None
+        if self.loaded_model_smn:
+            self.loaded_model_smn.load_weights(os.path.join(self.directory, "model-bw_smn.h5"))
         
         self.ct = {}
         self.ct['blank'] = 0

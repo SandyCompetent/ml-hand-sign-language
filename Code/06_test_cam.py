@@ -1,13 +1,26 @@
 import numpy as np
 import cv2
-import keras
 import os
 import time
 
-from gtts import gTTS
-from playsound import playsound
+try:
+    from tensorflow.keras.models import load_model
+except ImportError:
+    try:
+        from keras.models import load_model
+    except ImportError:
+        load_model = None
 
-model = keras.models.load_model(r"C:\Users\sande\Desktop\ml_sign_be_project\Code\model\trained_cnn_model.h5")
+try:
+    from gtts import gTTS
+    from playsound import playsound
+except ImportError:
+    gTTS = None
+    playsound = None
+
+base_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(base_dir, "model", "trained_cnn_model.h5")
+model = load_model(model_path) if (load_model and os.path.exists(model_path)) else None
 
 background = None
 accumulated_weight = 0.5
@@ -41,8 +54,8 @@ def segment_hand(frame, threshold=25):
     
     _ , thresholded = cv2.threshold(diff, threshold, 255, cv2.THRESH_BINARY)
     
-    #Fetching contours in the frame (These contours can be of hand or any other object in foreground) ...
-    image, contours, hierarchy = cv2.findContours(thresholded.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Fetching contours in the frame (works in OpenCV 3 and 4)
+    contours, hierarchy = cv2.findContours(thresholded.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2:]
 
     # If length of contours list = 0, means we didn't get any contours...
     if len(contours) == 0:

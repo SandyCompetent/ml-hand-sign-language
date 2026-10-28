@@ -67,7 +67,8 @@ def test_cam():
 #++++++++++++++++++++++++++++++++++++++++++++
 #####For background Image
 image2 =Image.open('asset/bg_dashboard.jpg')
-image2 =image2.resize((w,h), Image.ANTIALIAS)
+_resample = getattr(getattr(Image, 'Resampling', Image), 'LANCZOS', getattr(Image, 'ANTIALIAS', 1))
+image2 =image2.resize((w,h), _resample)
 
 background_image=ImageTk.PhotoImage(image2)
 

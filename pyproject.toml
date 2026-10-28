@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sign-language-translator"
+version = "2.0.0"
+description = "Realtime Sign Language (ASL) to English Text and Speech Translator with MediaPipe and Machine Learning"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+    { name = "Sandeep Malviya" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "opencv-python>=4.8.0",
+    "mediapipe>=0.10.0",
+    "numpy>=1.22.0",
+    "pillow>=10.0.0",
+    "pyspellchecker>=0.8.0",
+    "pyttsx3>=2.90",
+    "scikit-learn>=1.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+]
+
+[project.scripts]
+sign-language = "sign_language.ui.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -154,7 +154,8 @@ def login():
 
 #####For background Image
 image2 = Image.open('asset/bg_register.jpg')
-image2 = image2.resize((700, 700), Image.ANTIALIAS)
+_resample = getattr(getattr(Image, 'Resampling', Image), 'LANCZOS', getattr(Image, 'ANTIALIAS', 1))
+image2 = image2.resize((700, 700), _resample)
 
 background_image = ImageTk.PhotoImage(image2)
 

@@ -35,7 +35,8 @@ password = tk.StringVar()
 # ++++++++++++++++++++++++++++++++++++++++++++
 #####For background Image
 image2 = Image.open('asset/bg_login.jpg')
-image2 = image2.resize((ws,hs), Image.ANTIALIAS)
+_resample = getattr(getattr(Image, 'Resampling', Image), 'LANCZOS', getattr(Image, 'ANTIALIAS', 1))
+image2 = image2.resize((ws,hs), _resample)
 
 background_image = ImageTk.PhotoImage(image2)
 
